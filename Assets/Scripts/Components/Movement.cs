@@ -2,28 +2,54 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class Movement : MonoBehaviour
 {
-    float _yM;
-    float _xM;
+    Vector3 dir = Vector3.zero;
 
-    public float speed;
-    public void FixedUpdate()
+    [SerializeField]
+    private float speed = 10f;
+    [SerializeField]
+    private bool isComputer = true;
+
+    private Animator _animator;
+    public Animator ANIMATOR 
     {
-        if(Game.INSTANCE.JOYSTICK.Vertical != 0 || Game.INSTANCE.JOYSTICK.Horizontal != 0) {
-            _yM = Game.INSTANCE.JOYSTICK.Vertical;
-            _xM = Game.INSTANCE.JOYSTICK.Horizontal;
-        } else {
-            _yM = Input.GetAxis("Vertical");
-            _xM = Input.GetAxis("Horizontal");
+        get 
+        {
+            if(_animator == null)
+            {
+                _animator = GetComponent<Animator>();
+            }
+            return _animator;
         }
-
-        transform.Translate(new Vector3(_xM * Time.deltaTime * speed, 0, _yM * Time.deltaTime * speed));
     }
-  
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        if(isComputer == true) return;
+        if(Game.INSTANCE.JOYSTICK.Vertical != 0 || Game.INSTANCE.JOYSTICK.Horizontal != 0) {
+            dir.z = Game.INSTANCE.JOYSTICK.Vertical;
+            dir.x = Game.INSTANCE.JOYSTICK.Horizontal;
+        } else {
+            dir.z = Input.GetAxis("Vertical");
+            dir.x = Input.GetAxis("Horizontal");
+        }
+        Move();
+        ANIMATOR.SetFloat("magnitude", dir.magnitude);
+        FaceDirection();
     }
+
+
+    public void Move() {
+        transform.Translate(new Vector3(dir.x * Time.deltaTime * speed, 0, dir.z * Time.deltaTime * speed));
+    }
+    public void Move(float x , float y, float speed = 10 ) {
+        transform.Translate(new Vector3(x * Time.deltaTime * speed, 0, y * Time.deltaTime * speed));
+    }
+
+    private void FaceDirection() {
+        transform.GetChild(0).LookAt(transform.position + dir);
+    }
+
+
 }
