@@ -12,21 +12,13 @@ public class Movement : MonoBehaviour
     [SerializeField]
     private bool isComputer = true;
 
-    private Animator _animator;
-    public Animator ANIMATOR 
-    {
-        get 
-        {
-            if(_animator == null)
-            {
-                _animator = GetComponent<Animator>();
-            }
-            return _animator;
-        }
+    
+    bool CanMove() {
+        return isComputer == false && Game.INSTANCE.PLAYER.IsDEAD == false;
     }
     private void Update()
     {
-        if(isComputer == true) return;
+        if(!CanMove()) return;
         if(Game.INSTANCE.JOYSTICK.Vertical != 0 || Game.INSTANCE.JOYSTICK.Horizontal != 0) {
             dir.z = Game.INSTANCE.JOYSTICK.Vertical;
             dir.x = Game.INSTANCE.JOYSTICK.Horizontal;
@@ -35,7 +27,7 @@ public class Movement : MonoBehaviour
             dir.x = Input.GetAxis("Horizontal");
         }
         Move();
-        ANIMATOR.SetFloat("magnitude", dir.magnitude);
+        Game.INSTANCE.PLAYER.ANIMATOR.SetFloat("magnitude", dir.magnitude);
         FaceDirection();
     }
 
@@ -50,6 +42,7 @@ public class Movement : MonoBehaviour
     private void FaceDirection() {
         transform.GetChild(0).LookAt(transform.position + dir);
     }
+
 
 
 }

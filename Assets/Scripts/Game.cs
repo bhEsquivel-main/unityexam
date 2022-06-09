@@ -8,6 +8,16 @@ public class Game : MonoBehaviour
 
     public VariableJoystick JOYSTICK;
 
+
+    private Player _player;
+    public Player PLAYER
+    {
+        get 
+        {
+            if(_player == null)_player= GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+            return _player;
+        }
+    }
     void Awake() {
         if (INSTANCE == null)
         {
