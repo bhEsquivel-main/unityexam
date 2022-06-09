@@ -11,4 +11,5 @@ public class BaseCharacter : MonoBehaviour
 
 
     protected virtual void Update() {}
+    public virtual void CharacterMoveHandler(string[] args){}
 }

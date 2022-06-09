@@ -5,6 +5,10 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
+    
+    public delegate void MovementHandler(Vector3 dir);
+    public event MovementHandler OnMoveUnit;
+
     Vector3 dir = Vector3.zero;
 
     [SerializeField]
@@ -12,9 +16,11 @@ public class Movement : MonoBehaviour
     [SerializeField]
     private bool isComputer = true;
 
+    public bool isEnabled = true;
+
     
     bool CanMove() {
-        return isComputer == false && Game.INSTANCE.PLAYER.IsDEAD == false;
+        return isComputer == false && isEnabled == true;
     }
     private void Update()
     {
@@ -27,8 +33,8 @@ public class Movement : MonoBehaviour
             dir.x = Input.GetAxis("Horizontal");
         }
         Move();
-        Game.INSTANCE.PLAYER.ANIMATOR.SetFloat("magnitude", dir.magnitude);
         FaceDirection();
+        OnMoveUnit?.Invoke(dir);
     }
 
 
