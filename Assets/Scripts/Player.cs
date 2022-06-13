@@ -4,7 +4,23 @@ using UnityEngine;
 public class Player : BaseCharacter
 {
    
-    public bool IsDEAD = false;
+    private void Start()
+    {
+        Initialize();
+    }
+    protected override void Update()
+    {
+
+    }
+
+    
+    private void Initialize()
+    {
+        MOVEMENT.EnableMovement(); 
+        HEALTH.Initialize(100, 100);   
+    }
+
+
     private Movement _movement;
      public Movement MOVEMENT 
     {
@@ -18,24 +34,32 @@ public class Player : BaseCharacter
         }
     }
 
-    private Animator _animator;
-    public Animator ANIMATOR 
+    private CharAnimator _charAnim;
+    public CharAnimator CHAR_ANIM 
     {
         get 
         {
-            if(_animator == null)
+            if(_charAnim == null)
             {
-                _animator = GetComponentInChildren<Animator>();
+                _charAnim = GetComponent<CharAnimator>();
             }
-            return _animator;
+            return _charAnim;
         }
     }
 
-
-    void Start()
+    private Health _health;
+    public Health HEALTH 
     {
-
+        get 
+        {
+            if(_health == null)
+            {
+                _health = GetComponent<Health>();
+            }
+            return _health;
+        }
     }
+
 
     private void OnEnable() 
     {
@@ -43,33 +67,40 @@ public class Player : BaseCharacter
         {
             MOVEMENT.OnMoveUnit += CharacterMoveHandler;
         } 
+        if (HEALTH != null)
+        {
+            HEALTH.OnUnitDied += PlayerDeadHandler;
+            HEALTH.OnUnitHit += PlayerHitHandler;
+        }
     }
 
     private void OnDisable() {
         if(MOVEMENT != null) 
         {
             MOVEMENT.OnMoveUnit -= CharacterMoveHandler;
-        } 
+        }      
+        if (HEALTH != null)
+        {
+            HEALTH.OnUnitDied -= PlayerDeadHandler;
+            HEALTH.OnUnitHit += PlayerHitHandler;
+        }
     }
 
-    protected override void Update()
+
+    private void CharacterMoveHandler(Vector3 dir)
     {
-
+        if(CHAR_ANIM && HEALTH.IsAlive)CHAR_ANIM.Walk(dir.magnitude);
     }
 
-
-    public void CharacterMoveHandler(Vector3 dir)
+    private void PlayerDeadHandler() 
     {
-        AnimateWalk(dir.magnitude);
+        if(MOVEMENT) MOVEMENT.DisableMovement(); 
+        if(CHAR_ANIM)CHAR_ANIM.Dead();
+    }    
+    private void PlayerHitHandler() 
+    {
+        if(CHAR_ANIM && HEALTH.IsAlive)CHAR_ANIM.Hit();
     }
 
-    public void AnimateWalk(float value) 
-    {
-        ANIMATOR.SetFloat(Helper.P_ANIM_MOVEMENT, value);
-    }
-
-    public void AnimateDeath() 
-    {
-        ANIMATOR.SetBool(Helper.P_ANIM_DEAD, IsDEAD);
-    }
+    
 }

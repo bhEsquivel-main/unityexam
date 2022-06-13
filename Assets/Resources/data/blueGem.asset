@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 855f9db0994f0ee4fb41f29a77a79e93, type: 3}
+  m_Name: blueGem
+  m_EditorClassIdentifier: 
+  POINT_VALUE: 1
+  color: {r: 0, g: 0.55093956, b: 1, a: 0}
+  prefab: {fileID: 8835435827551078610, guid: 84b2502854c19b149af8867d5eab3cdd, type: 3}

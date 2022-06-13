@@ -3,6 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+public enum MovementType
+{
+    STATIONARY = 0,
+    CONTROLLED,
+    LtoR,
+    ROAMER,
+    FOLLOWER,
+}
 public class Movement : MonoBehaviour
 {
     
@@ -11,20 +19,78 @@ public class Movement : MonoBehaviour
 
     Vector3 dir = Vector3.zero;
 
+    Vector3 _initPosition;
+
+    //LEFTTOR
+    float _ltr_x_min;
+    float _ltr_x_max;
+    //ROAMER
+    float _roamer_radius;
+    //FOLLOWER
+    Transform _target;
+
     [SerializeField]
     private float speed = 10f;
-    [SerializeField]
-    private bool isComputer = true;
-
-    public bool isEnabled = true;
-
     
+    [SerializeField]
+    private MovementType _movementType = MovementType.STATIONARY;
+
+    private bool _enabled = false;
+
+    public void DisableMovement() 
+    {
+        _enabled = false;
+    }
+    public void EnableMovement() 
+    {
+        _enabled = true;
+    }
     bool CanMove() {
-        return isComputer == false && isEnabled == true;
+        return _enabled == true;
     }
     private void Update()
     {
         if(!CanMove()) return;
+        if(_movementType == MovementType.CONTROLLED)CONTROL();
+    }
+
+    /// <summary>
+    /// Initialize Position for STATIONARY and CONTROLLED
+    /// </summary>
+    public void Initialize(Vector3 initPos) 
+    {
+        this._initPosition = initPos;
+        this.transform.position = initPos;
+    }
+    /// <summary>
+    /// LtoR [pos, left, right]
+    /// </summary>
+    public void Initialize(Vector3 initPos, float xMin, float xMax)
+    {
+        Initialize(initPos);
+        this._ltr_x_min = xMin;
+        this._ltr_x_max = xMax;
+    }
+    /// <summary>
+    /// Roamer [pos, radius]
+    /// </summary>
+
+    public void Initialize(Vector3 initPos, float radius)
+    {
+        Initialize(initPos);
+        this._roamer_radius = radius;
+    }
+    /// <summary>
+    /// Follower [pos, targetTrans]
+    /// </summary>
+    public void Initialize(Vector3 initPos, Transform target)
+    {
+        Initialize(initPos);
+        this._target = target;
+    }
+
+    private void CONTROL()
+    {
         if(Game.INSTANCE.JOYSTICK.Vertical != 0 || Game.INSTANCE.JOYSTICK.Horizontal != 0) {
             dir.z = Game.INSTANCE.JOYSTICK.Vertical;
             dir.x = Game.INSTANCE.JOYSTICK.Horizontal;
