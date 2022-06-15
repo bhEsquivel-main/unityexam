@@ -4,6 +4,9 @@ using UnityEngine;
 public class Player : BaseCharacter
 {
    
+    public delegate void PlayerHandler(Gem g);
+    public event PlayerHandler OnCollect;
+
     private void Start()
     {
         Initialize();
@@ -102,5 +105,13 @@ public class Player : BaseCharacter
         if(CHAR_ANIM && HEALTH.IsAlive)CHAR_ANIM.Hit();
     }
 
+
+    private void OnTriggerEnter(Collider other) 
+    {
+        if (other.CompareTag("gem")) {
+           Gem gem = other.GetComponent<Gem>();
+           OnCollect?.Invoke(gem);
+        }
+    }
     
 }

@@ -5,15 +5,17 @@ using UnityEngine;
 public class Gem : MonoBehaviour, ICollectible
 {
     
+    public int POINT_VALUE;
 
     // Start is called before the first frame update
     void Start()
     {
-        Initialize();
+
     }
 
-    void Initialize()
+    public void Initialize(int _pointValue)
     {
+        this.POINT_VALUE = _pointValue;
 
     }
 
@@ -23,8 +25,8 @@ public class Gem : MonoBehaviour, ICollectible
         
     }
 
-    public void Collect()
+    public GameObject Collect()
     {
-
+        return this.gameObject;
     }
 }
