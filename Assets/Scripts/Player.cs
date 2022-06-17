@@ -87,6 +87,11 @@ public class Player : BaseCharacter
         if(CHAR_ANIM && HEALTH.IsAlive)CHAR_ANIM.Walk(dir.magnitude);
     }
 
+    public void Pause()
+    {
+        if(MOVEMENT) MOVEMENT.DisableMovement(); 
+    }
+
     private void PlayerDeadHandler() 
     {
         if(MOVEMENT) MOVEMENT.DisableMovement(); 

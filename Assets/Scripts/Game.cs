@@ -6,11 +6,15 @@ using UnityEngine.EventSystems;
 public class Game : MonoBehaviour
 {
     public static Game INSTANCE { get; set; }
+    [SerializeField]
+    private bool isPaused = false;
 
     public List<Gem> gems = new List<Gem>();
     public int point = 0;
 
     public VariableJoystick JOYSTICK;
+    [SerializeField]
+    private UIManager UI ;
 
     private Spawner _gspawner;
     public Spawner GEMSPAWNER 
@@ -46,10 +50,12 @@ public class Game : MonoBehaviour
     }
 
     public void Start() {
+        UI.OnPauseEvent += OnGamePaused;
+
         Timer.INSTANCE.OnStart += OnGameStarted;
         Timer.INSTANCE.OnEnd += OnGameEnded;
         Timer.INSTANCE.OnUpdate += OnGameUpdating;
-        Timer.INSTANCE.Initialize(20);
+        Timer.INSTANCE.Initialize(Helper.GAME_DURATION);
     }
 
     void Initialize() 
@@ -61,14 +67,37 @@ public class Game : MonoBehaviour
     void Update()
     {   
     }
-    public void OnGameStarted(float time) {
-        Initialize();
+
+    public void OnGamePaused(bool pause)
+    {
+        if(pause) {
+            Timer.INSTANCE.Stop();
+            PLAYER.MOVEMENT.DisableMovement();
+        } else {
+            PLAYER.MOVEMENT.EnableMovement();
+            Timer.INSTANCE.Resume();
+        }
     }
-    public void OnGameEnded(float time) {
+    public void OnGameStarted(float time) 
+    {
+        Initialize();
+        UpdateUITimer();
+    }
+    public void OnGameEnded(float time) 
+    {
         GameEnd();
+        UpdateUITimer();
     }
     public void OnGameUpdating(float time) {
+        UpdateUITimer();
+
         
+    }
+
+
+    private void UpdateUITimer()
+    {
+        UI.UpdateTimer(Timer.INSTANCE.Minutes + ":" + Timer.INSTANCE.Seconds);
     }
 
 
@@ -113,6 +142,7 @@ public class Game : MonoBehaviour
     {
         ClearGem(g);
         point += g.POINT_VALUE;
+        UI.UpdatePoints(point.ToString());
 
         if (CollectionCompleted()) 
         {

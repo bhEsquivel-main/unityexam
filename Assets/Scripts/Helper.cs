@@ -11,5 +11,6 @@ public class Helper
     public static int MAX_GEM_OBJECTS = 10;
     public static int MAX_ENEMY_OBJECTS = 5;
     public static int POINTS_TO_WIN = 5;
+    public static int GAME_DURATION = 120;
 
 }

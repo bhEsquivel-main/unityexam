@@ -16,6 +16,7 @@ public class Timer : MonoBehaviour
     public bool isRunning = false;
 
     private bool _initialized = false;
+    private bool isStopped = false;
 
     void Awake()
     {
@@ -32,7 +33,7 @@ public class Timer : MonoBehaviour
     void Update()
     {
 
-        if (isRunning && _initialized == true)
+        if (isRunning && _initialized == true && isStopped == false)
         {
             if (_timeLeft > 0)
             {
@@ -54,6 +55,15 @@ public class Timer : MonoBehaviour
         _timeLeft = _duration;
         isRunning = true;
         OnStart?.Invoke(_timeLeft);
+    }
+
+    public void Stop()
+    {
+        isStopped = true;
+    }
+    public void Resume()
+    {
+        isStopped = false;
     }
     void End()
     {
