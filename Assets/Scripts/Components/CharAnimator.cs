@@ -32,6 +32,10 @@ public class CharAnimator : MonoBehaviour
     public void Hit()
     {
         if(_animator)_animator.SetBool(Helper.P_ANIM_DEAD, false);
+    }  
+    public void Win()
+    {
+        if(_animator)_animator.SetBool(Helper.P_ANIM_WIN, true);
     }
 
 }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Gem : MonoBehaviour, ICollectible
+public class Gem : MonoBehaviour
 {
     
     public int POINT_VALUE;
@@ -25,8 +25,4 @@ public class Gem : MonoBehaviour, ICollectible
         
     }
 
-    public GameObject Collect()
-    {
-        return this.gameObject;
-    }
 }
