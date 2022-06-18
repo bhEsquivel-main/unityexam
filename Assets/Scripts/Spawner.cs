@@ -26,7 +26,7 @@ public class Spawner : MonoBehaviour
 
     public void StartSpawning() 
     {
-        InvokeRepeating("Spawn", 5, spawnTime);
+        InvokeRepeating("Spawn", 0, spawnTime);
     }
 
     public void StopSpawning()

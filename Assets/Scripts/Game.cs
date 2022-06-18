@@ -5,16 +5,12 @@ using UnityEngine.EventSystems;
 
 public class Game : MonoBehaviour
 {
-    public static Game INSTANCE { get; set; }
+    public static Game I { get; set; }
     [SerializeField]
     private bool isPaused = false;
 
     public List<Gem> gems = new List<Gem>();
     public int point = 0;
-
-    public VariableJoystick JOYSTICK;
-    [SerializeField]
-    private UIManager UI ;
 
     private Spawner _gspawner;
     public Spawner GEMSPAWNER 
@@ -38,9 +34,9 @@ public class Game : MonoBehaviour
         }
     }
     void Awake() {
-        if (INSTANCE == null)
+        if (I == null)
         {
-            INSTANCE = this;
+            I = this;
         }
         else
         {
@@ -50,10 +46,10 @@ public class Game : MonoBehaviour
     }
 
     public void Start() {
-        UI.OnPauseEvent += OnGamePaused;
+        UIManager.I.OnPauseEvent += OnGamePaused;
 
-        Timer.INSTANCE.OnStart += OnGameStarted;
-        Timer.INSTANCE.OnEnd += OnGameEnded;
+        Timer.INSTANCE.OnStart += OnTimeStarted;
+        Timer.INSTANCE.OnEnd += OnTimeExpired;
         Timer.INSTANCE.OnUpdate += OnGameUpdating;
         Timer.INSTANCE.Initialize(Helper.GAME_DURATION);
     }
@@ -78,12 +74,13 @@ public class Game : MonoBehaviour
             Timer.INSTANCE.Resume();
         }
     }
-    public void OnGameStarted(float time) 
+    public void OnTimeStarted(float time) 
     {
+        Debug.Log("OnTimeStarted");
         Initialize();
         UpdateUITimer();
     }
-    public void OnGameEnded(float time) 
+    public void OnTimeExpired(float time) 
     {
         GameEnd();
         UpdateUITimer();
@@ -97,7 +94,7 @@ public class Game : MonoBehaviour
 
     private void UpdateUITimer()
     {
-        UI.UpdateTimer(Timer.INSTANCE.Minutes + ":" + Timer.INSTANCE.Seconds);
+        UIManager.I.UpdateTimer(Timer.INSTANCE.Minutes + ":" + Timer.INSTANCE.Seconds);
     }
 
 
@@ -133,16 +130,27 @@ public class Game : MonoBehaviour
         //PLAYER.PlayerWin();
         PLAYER.OnCollect -= OnCollectGem;
         GEMSPAWNER.OnSpawn -= OnSpawnGem;
+        Timer.INSTANCE.Stop();
+        PLAYER.MOVEMENT.DisableMovement();
        // GAMETIME.RemoveTimerListener(this);
         ClearGems();
         GEMSPAWNER.StopSpawning();
+        Helper.CURRENT_SCORE = point;
+
+        GameOverScene();
+        
+
+    }
+    void GameOverScene() 
+    {
+        UIManager.I.InitializeGameOver();
     }
     //DELEGATE HANDLER
     void OnCollectGem(Gem g) 
     {
         ClearGem(g);
         point += g.POINT_VALUE;
-        UI.UpdatePoints(point.ToString());
+        UIManager.I.UpdatePoints(point.ToString());
 
         if (CollectionCompleted()) 
         {

@@ -91,10 +91,10 @@ public class Movement : MonoBehaviour
 
     private void CONTROL()
     {
-        if(Game.INSTANCE.JOYSTICK.Vertical != 0 || Game.INSTANCE.JOYSTICK.Horizontal != 0) {
-            dir.z = Game.INSTANCE.JOYSTICK.Vertical;
-            dir.x = Game.INSTANCE.JOYSTICK.Horizontal;
-        } else {
+        dir.z = JoystickController.I.Vertical;
+        dir.x = JoystickController.I.Horizontal;
+        if (dir.z == 0 && dir.x == 0)
+        {
             dir.z = Input.GetAxis("Vertical");
             dir.x = Input.GetAxis("Horizontal");
         }
