@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 
 public enum MovementType
@@ -28,6 +29,11 @@ public class Movement : MonoBehaviour
     float _roamer_radius;
     //FOLLOWER
     Transform _target;
+    
+	private NavMeshAgent agent;
+	public float rerouteDuration = 3f;
+	private float reroutingTimer = 0;
+	public float stopDistance = 3f;
 
     [SerializeField]
     private float speed = 10f;
@@ -52,6 +58,7 @@ public class Movement : MonoBehaviour
     {
         if(!CanMove()) return;
         if(_movementType == MovementType.CONTROLLED)CONTROL();
+        if(_movementType == MovementType.FOLLOWER)FOLLOW();
     }
 
     /// <summary>
@@ -101,6 +108,51 @@ public class Movement : MonoBehaviour
         Move();
         FaceDirection();
         OnMoveUnit?.Invoke(dir);
+    }
+
+    private void FOLLOW() 
+    {
+        if (reroutingTimer <= Time.time) { //only reroute in time intervalls of X seconds
+
+			//Only use navMesh while Player is out of reach
+			if(Vector3.Distance(_target.position, transform.position) > agent.stoppingDistance){ //No >= because it stops too abruptly
+				agent.enabled = true;
+				agent.SetDestination (_target.position); //reroute
+			}else{
+				//Player is close
+
+				//if can se no obstacle disable navigation
+				if(!Physics.Linecast(transform.position, _target.transform.position, LayerMask.GetMask("StaticObjects"))){ //Player can be shot
+					//Disable Navmesh to allow for manual transformation
+					agent.enabled = false;
+
+				}else if(agent.stoppingDistance != stopDistance){ //can see obstable and stopping distance is still large
+					//move closer
+					agent.enabled = true;
+					agent.stoppingDistance = stopDistance;
+
+				}else if(agent.stoppingDistance == stopDistance){ //obstable despite moving in closer
+					agent.enabled = true;
+					//if still unable to reach, move somewhere else
+					agent.SetDestination(new Vector3(
+						Random.value * (stopDistance+1) + _target.transform.position.x,
+						_target.transform.position.y,
+						Random.value * (stopDistance+1) + _target.transform.position.z
+					));
+				}
+			}
+			reroutingTimer = Time.time + rerouteDuration; //reset delay
+
+			if(false == agent.enabled){
+				//Enemy is not navigating
+
+				//Keep facing the placer
+				Vector3 direction = (_target.position - transform.position).normalized;
+				Quaternion lookRotation = Quaternion.LookRotation (new Vector3 (direction.x, 0, direction.z));
+				transform.rotation = Quaternion.Slerp (transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
+			}
+		}
+
     }
 
 
