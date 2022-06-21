@@ -12,7 +12,7 @@ public static class Helper
     public const int MAX_GEM_OBJECTS = 10;
     public const int MAX_ENEMY_OBJECTS = 5;
     public const int POINTS_TO_WIN = 100;
-    public const int GAME_DURATION = 10;
+    public const int GAME_DURATION = 120;
 
     public const int FRAME_RATE = 30;
     public static int CURRENT_SCORE = 0;

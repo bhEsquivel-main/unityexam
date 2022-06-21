@@ -26,12 +26,24 @@ public class Spawner : MonoBehaviour
 
     public void StartSpawning() 
     {
+
+        Debug.Log("SPAWN: "+ this.gameObject.name);
         InvokeRepeating("Spawn", 0, spawnTime);
     }
 
     public void StopSpawning()
     {
         CancelInvoke("Spawn");
+    }
+
+    public Transform[] SPAWN_POINTS
+    {
+        get {   
+            if(spawnPoints ==null || spawnPoints.Length  == 0) {
+                spawnPoints = GetComponentsInChildren<Transform>();
+            }
+            return spawnPoints;
+        }
     }
 
 
@@ -54,12 +66,15 @@ public class Spawner : MonoBehaviour
     Transform GetRandomSpawnPoint
     {
         get {
-            return (this.spawnPoints[Random.Range(0, this.spawnPoints.Length)]);
+            return (this.SPAWN_POINTS[Random.Range(0, this.SPAWN_POINTS.Length)]);
         }
     }
 
     void Spawn() 
     {
+        if(this.gameObject.name.Contains("Enemy")) {
+            Debug.Log("SPAWN: "+ this.SPAWN_POINTS.Length + " : " + this.spawnData.Length);
+        }
          Transform spawnPoint = GetRandomSpawnPoint;
          if(spawnPoint != null) 
          {

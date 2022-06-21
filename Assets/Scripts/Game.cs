@@ -10,6 +10,7 @@ public class Game : MonoBehaviour
     private bool isPaused = false;
 
     public List<Gem> gems = new List<Gem>();
+    public List<Enemy> enemies = new List<Enemy>();
     public int point = 0;
 
     private Spawner _gspawner;
@@ -19,6 +20,16 @@ public class Game : MonoBehaviour
         {
             if(_gspawner == null)_gspawner= GameObject.Find("GemSpawner").GetComponent<Spawner>();
             return _gspawner;
+        }
+    }
+
+    private Spawner _enemySpawner;
+    public Spawner ENEMYSPAWNER 
+    {
+        get 
+        {
+            if(_enemySpawner == null)_enemySpawner= GameObject.Find("EnemySpawner").GetComponent<Spawner>();
+            return _enemySpawner;
         }
     }
 
@@ -59,6 +70,7 @@ public class Game : MonoBehaviour
         this.point = 0;
         InitializePlayer();
         InitializeGem();
+        InitializeEnemies();
     }
     void Update()
     {   
@@ -109,6 +121,12 @@ public class Game : MonoBehaviour
     {
         GEMSPAWNER.OnSpawn += OnSpawnGem;
         GEMSPAWNER.StartSpawning();
+    }
+
+    void InitializeEnemies() 
+    {
+        ENEMYSPAWNER.OnSpawn += OnSpawnEnemy;
+        ENEMYSPAWNER.StartSpawning();
     }
 
     bool CollectionCompleted() {
@@ -174,11 +192,34 @@ public class Game : MonoBehaviour
         }
     }
 
+    void OnSpawnEnemy(GameObject obj, GameSO data) 
+    {
+        Debug.Log(data);
+        Enemy newEnemy = obj.GetComponent<Enemy>();
+        newEnemy.Initialize((data as EnemyDATA));
+
+        if((data as EnemyDATA).movementType == MovementType.FOLLOWER) {
+            newEnemy.MOVEMENT.Initialize(obj.transform.position, PLAYER.transform);
+        }
+        enemies.Add(newEnemy);
+
+        if(CanSpawnNewEnemy == false)  {
+            ENEMYSPAWNER.StopSpawning(); 
+        }
+    }
+
     bool CanSpawnNewGem
     {
         get
         {
             return gems.Count < Helper.MAX_GEM_OBJECTS;
+        }
+    }
+    bool CanSpawnNewEnemy
+    {
+        get
+        {
+            return enemies.Count < Helper.MAX_ENEMY_OBJECTS;
         }
     }
 }

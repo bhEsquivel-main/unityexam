@@ -15,7 +15,7 @@ public class SceneFadeEffect : MonoBehaviour
 
     private void Awake()
     {
-        fadeOutTexture = Resources.Load("Textures/Effects/black") as Texture2D;
+        fadeOutTexture = Resources.Load("Textures/black") as Texture2D;
     }
 
     private void OnGUI()

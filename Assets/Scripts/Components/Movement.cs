@@ -34,6 +34,8 @@ public class Movement : MonoBehaviour
 	public float rerouteDuration = 3f;
 	private float reroutingTimer = 0;
 	public float stopDistance = 3f;
+	public float rotationSpeed = 1;
+	public float closerStoppingDistance = 3f;
 
     [SerializeField]
     private float speed = 10f;
@@ -61,6 +63,10 @@ public class Movement : MonoBehaviour
         if(_movementType == MovementType.FOLLOWER)FOLLOW();
     }
 
+    public void InitializeType(MovementType type) 
+    {
+        _movementType = type;
+    }
     /// <summary>
     /// Initialize Position for STATIONARY and CONTROLLED
     /// </summary>
@@ -92,6 +98,10 @@ public class Movement : MonoBehaviour
     /// </summary>
     public void Initialize(Vector3 initPos, Transform target)
     {
+        agent = this.GetComponent <NavMeshAgent>();
+		if (agent.stoppingDistance == closerStoppingDistance) {
+			closerStoppingDistance = agent.stoppingDistance / 2;
+		}
         Initialize(initPos);
         this._target = target;
     }
@@ -112,6 +122,7 @@ public class Movement : MonoBehaviour
 
     private void FOLLOW() 
     {
+        if(  _target == null)return;
         if (reroutingTimer <= Time.time) { //only reroute in time intervalls of X seconds
 
 			//Only use navMesh while Player is out of reach

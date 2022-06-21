@@ -24,46 +24,6 @@ public class Player : BaseCharacter
     }
 
 
-    private Movement _movement;
-     public Movement MOVEMENT 
-    {
-        get 
-        {
-            if(_movement == null)
-            {
-                _movement = GetComponent<Movement>();
-            }
-            return _movement;
-        }
-    }
-
-    private CharAnimator _charAnim;
-    public CharAnimator CHAR_ANIM 
-    {
-        get 
-        {
-            if(_charAnim == null)
-            {
-                _charAnim = GetComponent<CharAnimator>();
-            }
-            return _charAnim;
-        }
-    }
-
-    private Health _health;
-    public Health HEALTH 
-    {
-        get 
-        {
-            if(_health == null)
-            {
-                _health = GetComponent<Health>();
-            }
-            return _health;
-        }
-    }
-
-
     private void OnEnable() 
     {
         if(MOVEMENT != null) 
