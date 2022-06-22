@@ -37,5 +37,10 @@ public class CharAnimator : MonoBehaviour
     {
         if(_animator)_animator.SetBool(Helper.P_ANIM_WIN, true);
     }
+    public void Attack()
+    {
+        if(_animator)_animator.SetTrigger(Helper.P_ANIM_FIRE);
+    }
+
 
 }

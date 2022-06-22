@@ -48,5 +48,36 @@ public abstract class BaseCharacter : MonoBehaviour
         }
     }
 
+    protected virtual  void CharacterMoveHandler(Vector3 dir)
+    {
+        if(CHAR_ANIM && HEALTH.IsAlive)CHAR_ANIM.Walk(dir.magnitude);
+    }
+
+
+    protected virtual void DeadHandler() 
+    {
+        if(MOVEMENT) MOVEMENT.DisableMovement(); 
+        if(CHAR_ANIM)CHAR_ANIM.Dead();
+    }    
+
+
+    protected virtual  void HitHandler() 
+    {
+        if(CHAR_ANIM && HEALTH.IsAlive)CHAR_ANIM.Hit();
+    }
+
+
+    public virtual  void Deactivate()
+    {
+        if(MOVEMENT != null) 
+        {
+            MOVEMENT.OnMoveUnit -= CharacterMoveHandler;
+        }      
+        if (HEALTH != null)
+        {
+            HEALTH.OnUnitDied -= DeadHandler;
+            HEALTH.OnUnitHit -= HitHandler;
+        }
+    }
 
 }

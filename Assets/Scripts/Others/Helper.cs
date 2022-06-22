@@ -10,7 +10,7 @@ public static class Helper
     public const string P_ANIM_FIRE = "fire";
 
     public const int MAX_GEM_OBJECTS = 10;
-    public const int MAX_ENEMY_OBJECTS = 5;
+    public const int MAX_ENEMY_OBJECTS = 2;
     public const int POINTS_TO_WIN = 100;
     public const int GAME_DURATION = 120;
 

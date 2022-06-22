@@ -33,7 +33,6 @@ public class Movement : MonoBehaviour
 	private NavMeshAgent agent;
 	public float rerouteDuration = 3f;
 	private float reroutingTimer = 0;
-	public float stopDistance = 3f;
 	public float rotationSpeed = 1;
 	public float closerStoppingDistance = 3f;
 
@@ -99,9 +98,6 @@ public class Movement : MonoBehaviour
     public void Initialize(Vector3 initPos, Transform target)
     {
         agent = this.GetComponent <NavMeshAgent>();
-		if (agent.stoppingDistance == closerStoppingDistance) {
-			closerStoppingDistance = agent.stoppingDistance / 2;
-		}
         Initialize(initPos);
         this._target = target;
     }
@@ -123,41 +119,29 @@ public class Movement : MonoBehaviour
     private void FOLLOW() 
     {
         if(  _target == null)return;
-        if (reroutingTimer <= Time.time) { //only reroute in time intervalls of X seconds
+        OnMoveUnit?.Invoke(Vector3.one);
+        if (reroutingTimer <= Time.time) { 
 
-			//Only use navMesh while Player is out of reach
-			if(Vector3.Distance(_target.position, transform.position) > agent.stoppingDistance){ //No >= because it stops too abruptly
+			if(Vector3.Distance(_target.position, transform.position) > agent.stoppingDistance){ 
 				agent.enabled = true;
-				agent.SetDestination (_target.position); //reroute
+				agent.SetDestination (_target.position ); 
 			}else{
-				//Player is close
-
-				//if can se no obstacle disable navigation
-				if(!Physics.Linecast(transform.position, _target.transform.position, LayerMask.GetMask("StaticObjects"))){ //Player can be shot
-					//Disable Navmesh to allow for manual transformation
-					agent.enabled = false;
-
-				}else if(agent.stoppingDistance != stopDistance){ //can see obstable and stopping distance is still large
-					//move closer
+                if(agent.stoppingDistance != closerStoppingDistance){ 
 					agent.enabled = true;
-					agent.stoppingDistance = stopDistance;
+					agent.stoppingDistance = closerStoppingDistance;
 
-				}else if(agent.stoppingDistance == stopDistance){ //obstable despite moving in closer
+				}else if(agent.stoppingDistance == closerStoppingDistance){
 					agent.enabled = true;
-					//if still unable to reach, move somewhere else
 					agent.SetDestination(new Vector3(
-						Random.value * (stopDistance+1) + _target.transform.position.x,
+						Random.value * (closerStoppingDistance+1) + _target.transform.position.x,
 						_target.transform.position.y,
-						Random.value * (stopDistance+1) + _target.transform.position.z
+						Random.value * (closerStoppingDistance+1) + _target.transform.position.z
 					));
 				}
 			}
-			reroutingTimer = Time.time + rerouteDuration; //reset delay
+			reroutingTimer = Time.time + rerouteDuration; 
 
 			if(false == agent.enabled){
-				//Enemy is not navigating
-
-				//Keep facing the placer
 				Vector3 direction = (_target.position - transform.position).normalized;
 				Quaternion lookRotation = Quaternion.LookRotation (new Vector3 (direction.x, 0, direction.z));
 				transform.rotation = Quaternion.Slerp (transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);

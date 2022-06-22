@@ -12,6 +12,7 @@ public class Game : MonoBehaviour
     public List<Gem> gems = new List<Gem>();
     public List<Enemy> enemies = new List<Enemy>();
     public int point = 0;
+	public Transform canvas;
 
     private Spawner _gspawner;
     public Spawner GEMSPAWNER 
@@ -97,6 +98,8 @@ public class Game : MonoBehaviour
         GameEnd();
         UpdateUITimer();
     }
+
+    
     public void OnGameUpdating(float time) {
         UpdateUITimer();
 
@@ -115,6 +118,7 @@ public class Game : MonoBehaviour
     void InitializePlayer() 
     {
         PLAYER.OnCollect += OnCollectGem;
+        PLAYER.OnDefeat += OnDefeat;
     }
 
     void InitializeGem() 
@@ -147,6 +151,7 @@ public class Game : MonoBehaviour
     void GameEnd() {
         //PLAYER.PlayerWin();
         PLAYER.OnCollect -= OnCollectGem;
+        PLAYER.OnDefeat -= OnDefeat;
         GEMSPAWNER.OnSpawn -= OnSpawnGem;
         Timer.INSTANCE.Stop();
         PLAYER.MOVEMENT.DisableMovement();
@@ -164,6 +169,11 @@ public class Game : MonoBehaviour
         UIManager.I.InitializeGameOver();
     }
     //DELEGATE HANDLER
+    void OnDefeat(Gem g) 
+    {
+        GameEnd();
+        return;
+    }
     void OnCollectGem(Gem g) 
     {
         ClearGem(g);
@@ -196,7 +206,7 @@ public class Game : MonoBehaviour
     {
         Debug.Log(data);
         Enemy newEnemy = obj.GetComponent<Enemy>();
-        newEnemy.Initialize((data as EnemyDATA));
+        newEnemy.Initialize((data as EnemyDATA), PLAYER.transform);
 
         if((data as EnemyDATA).movementType == MovementType.FOLLOWER) {
             newEnemy.MOVEMENT.Initialize(obj.transform.position, PLAYER.transform);
@@ -222,4 +232,9 @@ public class Game : MonoBehaviour
             return enemies.Count < Helper.MAX_ENEMY_OBJECTS;
         }
     }
+
+    
+    public Transform getCanvas(){
+		return canvas;
+	}
 }
